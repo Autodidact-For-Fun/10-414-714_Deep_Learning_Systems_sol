@@ -20,13 +20,20 @@ class Device:
 
 class CPUDevice(Device):
     """Represents data that sits in CPU"""
-
+    # The repr method returns a string that is a valid Python expression representing the object. 
+    # It is used for debugging and logging purposes.
     def __repr__(self):
         return "needle.cpu()"
 
+    # The hash method returns an integer that is the hash value of the object. 
+    # It is used to store objects in hash-based data structures like dictionaries and sets. 
+    # The hash value should be consistent with the equality comparison: 
+    # if two objects are equal, they should have the same hash value.
     def __hash__(self):
         return self.__repr__().__hash__()
 
+    # The eq method defines how objects are compared for equality using the == operator. 
+    # It should return True if the objects have the same data or state, and False otherwise.
     def __eq__(self, other):
         return isinstance(other, CPUDevice)
 
@@ -44,7 +51,9 @@ def all_devices():
 
 class Op:
     """Operator definition."""
-
+    # The __call__ method is a special method in Python that 
+    # enables you to write classes where the instances behave like functions 
+    # and can be called like a function. eg: op = Op() print(op())
     def __call__(self, *args):
         raise NotImplementedError()
 
@@ -151,6 +160,8 @@ class Value:
         global TENSOR_COUNTER
         TENSOR_COUNTER += 1
         if requires_grad is None:
+            # The any() function in Python returns True if any element of an iterable is true. 
+            # If not, it returns False
             requires_grad = any(x.requires_grad for x in inputs)
         self.op = op
         self.inputs = inputs
@@ -169,6 +180,7 @@ class Value:
         )
         return value
 
+    
     @classmethod
     def make_from_op(cls, op: Op, inputs: List["Value"]):
         value = cls.__new__(cls)
@@ -257,6 +269,7 @@ class Tensor(Value):
 
     @staticmethod
     def make_from_op(op: Op, inputs: List["Value"]):
+        # initializing it manually using the _init method instead of the standard __init__ method
         tensor = Tensor.__new__(Tensor)
         tensor._init(op, inputs)
         if not LAZY_MODE:
